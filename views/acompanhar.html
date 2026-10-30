@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acompanhar pedido — Café Aroma</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topo">
+    <a href="/" class="marca">☕ Café Aroma</a>
+    <nav aria-label="Navegação principal">
+      <a href="/">Cardápio</a>
+      <a href="/acompanhar.html" aria-current="page">Acompanhar pedido</a>
+    </nav>
+  </header>
+
+  <main class="pagina-estreita">
+    <h1>Acompanhar pedido</h1>
+    <form class="painel busca-codigo" id="form-busca">
+      <label>Código do pedido
+        <input name="codigo" maxlength="12" placeholder="Ex.: K7P2QX" autocomplete="off" required>
+      </label>
+      <button class="botao primario" type="submit">Consultar</button>
+    </form>
+    <p class="erro-form" id="erro-busca" role="alert"></p>
+
+    <section class="painel" id="resultado" hidden aria-live="polite">
+      <h2>Pedido <span id="res-codigo"></span></h2>
+      <p class="dica" id="res-info"></p>
+      <div class="aviso-cancelado" id="res-cancelado" hidden>Este pedido foi cancelado. Em caso de dúvida, fale com a cafeteria.</div>
+      <ol class="linha-tempo" id="res-linha-tempo"></ol>
+      <h3>Itens</h3>
+      <ul class="lista-simples" id="res-itens"></ul>
+      <dl class="totais">
+        <div><dt>Subtotal</dt><dd id="res-subtotal"></dd></div>
+        <div><dt>Taxa de entrega</dt><dd id="res-taxa"></dd></div>
+        <div class="total"><dt>Total</dt><dd id="res-total"></dd></div>
+      </dl>
+      <p class="dica" id="res-atualizado"></p>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/acompanhar.js"></script>
+</body>
+</html>

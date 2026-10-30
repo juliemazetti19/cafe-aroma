@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Café Aroma — Peça online</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topo">
+    <a href="/" class="marca">☕ Café Aroma</a>
+    <nav aria-label="Navegação principal">
+      <a href="/" aria-current="page">Cardápio</a>
+      <a href="/acompanhar.html">Acompanhar pedido</a>
+    </nav>
+  </header>
+
+  <main class="loja">
+    <section aria-labelledby="titulo-cardapio">
+      <div class="intro">
+        <h1 id="titulo-cardapio">Nosso cardápio</h1>
+        <p>Escolha seus itens e retire no balcão ou receba em casa.</p>
+      </div>
+      <div class="filtros" id="filtros" role="tablist" aria-label="Filtrar por categoria"></div>
+      <div class="grade" id="grade-produtos">
+        <p class="carregando">Carregando cardápio…</p>
+      </div>
+    </section>
+
+    <aside class="carrinho" id="carrinho" aria-labelledby="titulo-carrinho">
+      <h2 id="titulo-carrinho">Seu pedido</h2>
+      <p class="vazio" id="carrinho-vazio">Seu carrinho está vazio. Adicione itens do cardápio.</p>
+      <ul class="itens-carrinho" id="itens-carrinho"></ul>
+      <dl class="totais" id="totais-carrinho" hidden>
+        <div class="total"><dt>Subtotal</dt><dd id="subtotal-carrinho"></dd></div>
+      </dl>
+      <p class="dica" id="dica-taxa" hidden></p>
+      <button class="botao primario largo" id="btn-finalizar" disabled>Finalizar pedido</button>
+      <button class="botao link largo" id="btn-limpar" hidden>Esvaziar carrinho</button>
+    </aside>
+  </main>
+
+  <button class="carrinho-flutuante" id="btn-ver-carrinho" hidden>
+    Ver pedido (<span id="contador-flutuante">0</span>) · <span id="total-flutuante"></span>
+  </button>
+
+  <dialog id="dialogo-checkout" aria-labelledby="titulo-checkout">
+    <form id="form-checkout" novalidate>
+      <h2 id="titulo-checkout">Finalizar pedido</h2>
+      <fieldset>
+        <legend>Seus dados</legend>
+        <label>Nome completo
+          <input name="nome" required minlength="3" maxlength="80" autocomplete="name">
+        </label>
+        <label>Telefone (WhatsApp)
+          <input name="telefone" required inputmode="tel" placeholder="(61) 99999-9999" autocomplete="tel">
+        </label>
+        <label>E-mail <span class="dica">(opcional)</span>
+          <input name="email" type="email" maxlength="120" autocomplete="email">
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Como você quer receber?</legend>
+        <label class="opcao"><input type="radio" name="tipo_entrega" value="RETIRADA" checked> Retirar no balcão (grátis)</label>
+        <label class="opcao"><input type="radio" name="tipo_entrega" value="ENTREGA"> <span>Entrega (<span id="texto-taxa"></span>)</span></label>
+        <label id="campo-endereco" hidden>Endereço completo
+          <textarea name="endereco" rows="2" maxlength="200" placeholder="Rua, número, complemento e bairro" autocomplete="street-address"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Pagamento <span class="dica">(feito na retirada ou entrega)</span></legend>
+        <label class="opcao"><input type="radio" name="forma_pagamento" value="PIX" checked> PIX</label>
+        <label class="opcao"><input type="radio" name="forma_pagamento" value="CARTAO"> Cartão de crédito/débito</label>
+        <label class="opcao"><input type="radio" name="forma_pagamento" value="DINHEIRO"> Dinheiro</label>
+      </fieldset>
+
+      <label>Observações <span class="dica">(opcional)</span>
+        <textarea name="observacao" rows="2" maxlength="200" placeholder="Ex.: sem açúcar, leite sem lactose"></textarea>
+      </label>
+
+      <dl class="totais">
+        <div><dt>Subtotal</dt><dd id="checkout-subtotal"></dd></div>
+        <div><dt>Taxa de entrega</dt><dd id="checkout-taxa"></dd></div>
+        <div class="total"><dt>Total</dt><dd id="checkout-total"></dd></div>
+      </dl>
+      <p class="erro-form" id="erro-checkout" role="alert"></p>
+      <div class="acoes">
+        <button type="button" class="botao" id="btn-voltar">Voltar</button>
+        <button type="submit" class="botao primario" id="btn-confirmar">Confirmar pedido</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dialogo-sucesso" aria-labelledby="titulo-sucesso">
+    <div class="sucesso">
+      <div class="icone-grande" aria-hidden="true">✅</div>
+      <h2 id="titulo-sucesso">Pedido recebido!</h2>
+      <p>Anote o código do seu pedido para acompanhar o preparo:</p>
+      <p class="codigo" id="codigo-pedido"></p>
+      <div class="acoes">
+        <button type="button" class="botao" id="btn-novo-pedido">Fazer outro pedido</button>
+        <a class="botao primario" id="link-acompanhar" href="/acompanhar.html">Acompanhar pedido</a>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/loja.js"></script>
+</body>
+</html>

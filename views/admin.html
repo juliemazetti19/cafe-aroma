@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel da cafeteria — Café Aroma</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topo">
+    <a href="/admin.html" class="marca">☕ Café Aroma · Painel</a>
+    <nav aria-label="Navegação do painel">
+      <a href="/" target="_blank" rel="noopener">Ver loja</a>
+      <a href="#" id="link-sair" hidden>Sair</a>
+    </nav>
+  </header>
+
+  <!-- Tela de login -->
+  <main class="pagina-estreita" id="tela-login">
+    <form class="painel login-caixa" id="form-login">
+      <h1>Entrar no painel</h1>
+      <p class="dica">Área exclusiva para funcionários da cafeteria.</p>
+      <label>Login <input name="login" required autocomplete="username"></label>
+      <label>Senha <input name="senha" type="password" required autocomplete="current-password"></label>
+      <p class="erro-form" id="erro-login" role="alert"></p>
+      <button class="botao primario largo" type="submit">Entrar</button>
+    </form>
+  </main>
+
+  <!-- Painel -->
+  <main class="admin" id="tela-painel" hidden>
+    <section class="cartoes-resumo" aria-label="Resumo do dia">
+      <div class="cartao-resumo"><div class="rotulo">Pedidos hoje</div><div class="valor" id="resumo-pedidos">–</div></div>
+      <div class="cartao-resumo"><div class="rotulo">Faturamento hoje</div><div class="valor" id="resumo-faturamento">–</div></div>
+      <div class="cartao-resumo"><div class="rotulo">Pedidos em aberto</div><div class="valor" id="resumo-abertos">–</div></div>
+    </section>
+
+    <div class="abas" role="tablist">
+      <button class="aba" role="tab" aria-selected="true" data-aba="pedidos">Pedidos</button>
+      <button class="aba" role="tab" aria-selected="false" data-aba="produtos">Produtos</button>
+    </div>
+
+    <section id="aba-pedidos">
+      <div class="barra-ferramentas">
+        <label>Filtrar por status
+          <select id="filtro-status">
+            <option value="">Todos</option>
+            <option value="RECEBIDO">Recebido</option>
+            <option value="EM_PREPARO">Em preparo</option>
+            <option value="PRONTO">Pronto</option>
+            <option value="SAIU_PARA_ENTREGA">Saiu para entrega</option>
+            <option value="CONCLUIDO">Concluído</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </label>
+        <span class="dica" id="pedidos-atualizado"></span>
+        <button class="botao" id="btn-atualizar-pedidos" type="button">↻ Atualizar</button>
+      </div>
+      <div class="tabela-container">
+        <table>
+          <thead>
+            <tr><th>Código</th><th>Horário</th><th>Cliente</th><th>Itens</th><th>Entrega</th><th>Total</th><th>Status</th><th>Ações</th></tr>
+          </thead>
+          <tbody id="tabela-pedidos"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="aba-produtos" hidden>
+      <div class="barra-ferramentas">
+        <span class="dica">Produtos inativos não aparecem no cardápio da loja.</span>
+        <button class="botao primario" id="btn-novo-produto" type="button">+ Novo produto</button>
+      </div>
+      <div class="tabela-container">
+        <table>
+          <thead><tr><th></th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Situação</th><th>Ações</th></tr></thead>
+          <tbody id="tabela-produtos"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="dialogo-produto" aria-labelledby="titulo-produto">
+    <form id="form-produto" novalidate>
+      <h2 id="titulo-produto">Produto</h2>
+      <label>Nome <input name="nome" required minlength="2" maxlength="80"></label>
+      <label>Descrição <textarea name="descricao" rows="2" maxlength="200"></textarea></label>
+      <label>Preço (R$) <input name="preco" type="number" min="0.01" max="1000" step="0.01" required></label>
+      <label>Categoria <select name="categoria_id" id="select-categoria"></select></label>
+      <label>Ícone (emoji) <input name="icone" maxlength="4" placeholder="☕"></label>
+      <label class="opcao"><input type="checkbox" name="ativo" checked> Disponível no cardápio</label>
+      <p class="erro-form" id="erro-produto" role="alert"></p>
+      <div class="acoes">
+        <button type="button" class="botao" id="btn-cancelar-produto">Cancelar</button>
+        <button type="submit" class="botao primario">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>
