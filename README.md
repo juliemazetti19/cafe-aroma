@@ -1,106 +1,102 @@
-# ☕ Café Aroma — Sistema de vendas online para cafeteria
+# Café Aroma
 
-Projeto Integrador Transdisciplinar em Sistemas de Informação II (PIT-II).
+Sistema de pedidos online para uma cafeteria, feito para o Projeto Integrador Transdisciplinar em Sistemas de Informação II (PIT-II).
 
-Aplicação web em que o cliente monta o pedido pelo cardápio, escolhe entre retirada no
-balcão ou entrega e acompanha o preparo pelo código do pedido. Os funcionários usam um
-painel para mudar o status dos pedidos e cuidar do cardápio.
+O cliente escolhe os produtos no cardápio, decide se vai retirar no balcão ou receber em casa e acompanha o pedido pelo código que recebe ao finalizar. A equipe da cafeteria usa um painel para mudar o status dos pedidos e cuidar do cardápio.
+
+Versão publicada: https://cafe-aroma-zz6g.onrender.com (no plano gratuito do Render, o primeiro acesso pode levar até 1 minuto).
 
 ## Tecnologias
 
-| Camada | Tecnologia |
+| Parte | O que usei |
 |---|---|
-| Front-end (View) | HTML5, CSS3 e JavaScript puro (sem frameworks) |
-| Back-end (Controller e Model) | Python 3.10+ com a biblioteca padrão (`http.server`, `sqlite3`) |
-| Banco de dados | SQLite (arquivo `database/cafeteria.db`, criado sozinho). Script MySQL equivalente em `database/schema_mysql.sql` |
-| Testes | `unittest` (compatível com `pytest`) |
+| Front-end (View) | HTML, CSS e JavaScript, sem framework |
+| Back-end (Controller e Model) | Python 3.10 ou mais novo, só com a biblioteca padrão (`http.server` e `sqlite3`) |
+| Banco de dados | SQLite, no arquivo `database/cafeteria.db`, que é criado na primeira execução. O mesmo modelo em MySQL está em `database/schema_mysql.sql` |
+| Testes | `unittest` |
 
-Não é preciso instalar nenhuma biblioteca, só o Python.
+Não precisa instalar nenhuma biblioteca, só o Python.
 
-## Como executar
+## Como rodar no computador
 
 1. Instale o Python 3.10 ou mais novo (https://www.python.org/downloads/).
-2. Abra um terminal na pasta `cafeteria` e rode:
+2. Abra um terminal na pasta do projeto e rode:
    ```
    python app.py
    ```
-3. Acesse no navegador:
+3. Abra no navegador:
    - Loja: http://localhost:8000
    - Acompanhar pedido: http://localhost:8000/acompanhar.html
-   - Painel da cafeteria: http://localhost:8000/admin.html (login `admin`, senha `cafe123`)
+   - Painel da cafeteria: http://localhost:8000/admin.html (login `admin` e senha `cafe123`)
 
-Para parar o servidor, pressione `Ctrl + C` no terminal. Para recomeçar com o banco limpo,
-apague o arquivo `database/cafeteria.db`.
+Para parar, aperte `Ctrl + C` no terminal. Se quiser começar com o banco zerado, apague o arquivo `database/cafeteria.db` antes de rodar de novo.
 
 ## Manual de uso
 
 ### Cliente
-1. Na página **Cardápio**, filtre por categoria e clique em **Adicionar** nos itens desejados.
-2. No quadro **Seu pedido**, ajuste as quantidades com **−** e **+** ou remova itens. O carrinho
-   fica salvo no navegador, mesmo que a página seja fechada.
-3. Clique em **Finalizar pedido** e preencha nome, telefone, forma de recebimento (retirada grátis
-   ou entrega com taxa de R$ 6,00), forma de pagamento e observações.
-4. Ao confirmar, aparece o **código do pedido** (6 letras e números). Guarde esse código.
-5. Na página **Acompanhar pedido**, digite o código para ver a etapa do pedido: Recebido →
-   Em preparo → Pronto → (Saiu para entrega) → Concluído. A página se atualiza sozinha.
 
-### Funcionário (painel)
-1. Acesse `/admin.html` e entre com login e senha.
-2. No topo aparecem os pedidos do dia, o faturamento e os pedidos em aberto.
-3. Na aba **Pedidos**, use os botões de cada linha para avançar o status (ex.: **→ Em preparo**).
-   O sistema só mostra os próximos passos válidos. Para cancelar, clique em **Cancelar** duas vezes.
-4. Na aba **Produtos**, cadastre novos itens, edite preço/descrição ou **Desative** um item que
-   acabou (ele some do cardápio, mas continua nos pedidos antigos).
+1. No cardápio, escolha uma categoria se quiser e clique em Adicionar nos produtos.
+2. No quadro "Seu pedido" dá para aumentar ou diminuir a quantidade e remover itens. O carrinho fica salvo no navegador, então ele continua lá se a página for fechada.
+3. Clique em Finalizar pedido e preencha nome, telefone, se vai retirar (grátis) ou receber em casa (taxa de R$ 6,00), a forma de pagamento e, se quiser, uma observação.
+4. Depois de confirmar, aparece o código do pedido, com 6 letras e números. Guarde esse código.
+5. Em Acompanhar pedido, digite o código. A página mostra em que etapa o pedido está (Recebido, Em preparo, Pronto, Saiu para entrega e Concluído) e se atualiza sozinha. Quando o status muda, aparece um aviso na tela.
 
-## Arquitetura (padrão MVC)
+### Funcionário
+
+1. Entre em `/admin.html` com login e senha.
+2. No topo ficam os números do dia: pedidos, faturamento e pedidos em aberto.
+3. Na aba Pedidos, cada pedido tem botões só com os próximos passos possíveis, por exemplo "Em preparo". Para cancelar, é preciso clicar em Cancelar duas vezes, para evitar engano.
+4. Na aba Produtos dá para cadastrar um produto, mudar preço e descrição ou desativar um item que acabou. O produto desativado sai do cardápio, mas continua aparecendo nos pedidos antigos.
+
+## Organização do código (MVC)
 
 ```
 cafeteria/
-├── app.py                  # Servidor HTTP + roteador: liga cada URL ao controller
-├── models/                 # MODEL: dados e regras de negócio
-│   ├── database.py         #   conexão, criação das tabelas e dados iniciais
-│   ├── produto.py          #   cardápio e validação de produtos
-│   ├── pedido.py           #   cálculo de valores, validação e fluxo de status
-│   ├── administrador.py    #   autenticação do painel
-│   ├── seguranca.py        #   hash de senha (PBKDF2)
-│   └── erros.py            #   exceções de validação
-├── controllers/            # CONTROLLER: recebe a requisição e chama o model
-│   ├── loja_controller.py  #   rotas públicas (cardápio, pedidos)
-│   └── admin_controller.py #   rotas protegidas por login
-├── views/                  # VIEW: o que o usuário vê
+├── app.py                  servidor e roteador, liga cada endereço ao controller
+├── models/                 MODEL, dados e regras de negócio
+│   ├── database.py         conexão, criação das tabelas e dados iniciais
+│   ├── produto.py          cardápio e validação de produtos
+│   ├── pedido.py           cálculo dos valores, validação e status
+│   ├── administrador.py    login do painel
+│   ├── seguranca.py        hash de senha (PBKDF2)
+│   └── erros.py            erros de validação
+├── controllers/            CONTROLLER, recebe a requisição e chama o model
+│   ├── loja_controller.py  rotas da loja (cardápio e pedidos)
+│   └── admin_controller.py rotas do painel, que exigem login
+├── views/                  VIEW, as telas
 │   ├── index.html, acompanhar.html, admin.html, 404.html
 │   ├── css/style.css
 │   └── js/ (api.js, loja.js, acompanhar.js, admin.js)
-├── database/schema_mysql.sql   # projeto físico do banco em MySQL
-└── tests/test_api.py           # testes automatizados
+├── database/schema_mysql.sql   projeto físico do banco em MySQL
+└── tests/test_api.py           testes automatizados
 ```
 
-Fluxo de uma requisição: **Usuário → View (JS faz `fetch`) → Roteador (`app.py`) → Controller →
-Model → banco**. A resposta JSON volta pelo mesmo caminho e a View atualiza a tela.
+Quando o usuário faz alguma coisa na tela, o JavaScript chama a API com `fetch`. O `app.py` encontra o controller certo, o controller chama o model e o model lê ou grava no banco. A resposta volta em JSON e o JavaScript atualiza a tela.
 
 ### Rotas da API
 
-| Método | Rota | Descrição |
+| Método | Rota | Para que serve |
 |---|---|---|
 | GET | `/api/categorias` | Lista as categorias |
 | GET | `/api/produtos` | Lista os produtos ativos |
 | GET | `/api/configuracoes` | Taxa de entrega e limite de quantidade |
 | POST | `/api/pedidos` | Cria um pedido |
-| GET | `/api/pedidos/{codigo}` | Consulta pública do pedido (sem dados pessoais) |
-| POST | `/api/admin/login` / `logout` | Entrar/sair do painel |
-| GET | `/api/admin/resumo` | Indicadores do dia |
-| GET | `/api/admin/pedidos?status=` | Lista pedidos |
-| PATCH | `/api/admin/pedidos/{id}/status` | Avança o status |
-| GET/POST | `/api/admin/produtos` | Lista todos / cadastra produto |
-| PUT | `/api/admin/produtos/{id}` | Edita produto |
+| GET | `/api/pedidos/{codigo}` | Consulta o pedido pelo código, sem dados pessoais |
+| POST | `/api/admin/login` e `/api/admin/logout` | Entra e sai do painel |
+| GET | `/api/admin/resumo` | Números do dia |
+| GET | `/api/admin/pedidos?status=` | Lista os pedidos |
+| PATCH | `/api/admin/pedidos/{id}/status` | Muda o status |
+| GET e POST | `/api/admin/produtos` | Lista e cadastra produtos |
+| PUT | `/api/admin/produtos/{id}` | Edita um produto |
 
-### Regras de negócio e segurança
-- O **preço é sempre calculado no servidor** com os valores do banco. O valor enviado pelo navegador é ignorado.
-- Valores em dinheiro são guardados em **centavos** (inteiros), sem erros de arredondamento.
-- O status só avança pelos caminhos válidos (não é possível pular etapas nem reabrir pedido concluído).
-- A consulta pública mostra só o primeiro nome do cliente, sem telefone nem endereço.
-- Senhas guardadas com **hash PBKDF2 + salt**. As rotas do painel exigem token de sessão (expira em 8h).
-- Consultas SQL parametrizadas (contra *SQL injection*). As telas usam `textContent` (contra *XSS*).
+### Regras importantes
+
+- O preço é sempre calculado no servidor com o valor do banco. Se o navegador mandar outro preço, ele é ignorado.
+- Os valores são guardados em centavos, como número inteiro, para não ter erro de arredondamento.
+- O status só anda pelos caminhos válidos. Não dá para pular etapa nem mexer num pedido já concluído.
+- A consulta pelo código mostra só o primeiro nome do cliente, sem telefone e sem endereço.
+- A senha do painel é guardada com hash PBKDF2 e salt. As rotas do painel pedem um token de sessão, que vale por 8 horas.
+- As consultas SQL usam parâmetros, para evitar SQL injection, e as telas mostram os textos com `textContent`, para evitar XSS.
 
 ## Testes
 
@@ -108,13 +104,8 @@ Model → banco**. A resposta JSON volta pelo mesmo caminho e a View atualiza a 
 python -m unittest -v
 ```
 
-São 16 testes que sobem o servidor com um banco temporário e verificam cardápio, criação de
-pedido (retirada e entrega), validações, cálculo do total, privacidade da consulta pública,
-login, proteção das rotas, fluxo de status e cadastro de produtos.
+São 16 testes. Eles sobem o servidor com um banco temporário e conferem o cardápio, os pedidos com retirada e com entrega, as validações, o cálculo do total, a privacidade da consulta, o login, a proteção das rotas do painel, a mudança de status e o cadastro de produtos.
 
-## Publicação gratuita (para os colegas testarem)
+## Publicação
 
-O servidor lê as variáveis `HOST` e `PORT`, então pode ser publicado, por exemplo, no
-**Render** (Web Service gratuito, comando de início `python app.py`, variável `HOST=0.0.0.0`) ou no
-**PythonAnywhere**. **Antes de publicar, defina a variável `ADMIN_SENHA`** com uma senha forte.
-Ela é usada na primeira execução, quando o banco é criado.
+O servidor lê as variáveis `HOST` e `PORT`, então dá para publicar em serviços gratuitos. Eu usei o Render (Web Service gratuito, comando de início `python app.py` e variável `HOST=0.0.0.0`). Antes de publicar, defina a variável `ADMIN_SENHA` com uma senha forte, porque ela é usada quando o banco é criado na primeira execução.
