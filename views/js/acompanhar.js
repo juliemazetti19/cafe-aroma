@@ -8,6 +8,7 @@ const ETAPAS = {
 
 const el = (id) => document.getElementById(id);
 let temporizador;
+let ultimoStatus = null; // status da última consulta, para avisar o cliente quando ele mudar
 
 function renderizarPedido(pedido) {
   el("res-codigo").textContent = pedido.codigo;
@@ -60,6 +61,12 @@ async function consultar(codigo, silencioso = false) {
   if (!silencioso) el("erro-busca").textContent = "";
   try {
     const pedido = await Api.get(`/api/pedidos/${encodeURIComponent(codigo)}`);
+    // Melhoria vinda dos testes com usuários: a atualização automática passava despercebida,
+    // então a mudança de status agora gera um aviso na tela.
+    if (silencioso && ultimoStatus && pedido.status !== ultimoStatus) {
+      mostrarToast(`Seu pedido agora está: ${NOMES_STATUS[pedido.status]}.`, "sucesso");
+    }
+    ultimoStatus = pedido.status;
     const finalizado = renderizarPedido(pedido);
     history.replaceState(null, "", `?codigo=${encodeURIComponent(pedido.codigo)}`);
     if (!finalizado) temporizador = setTimeout(() => consultar(codigo, true), INTERVALO_ATUALIZACAO_MS);
